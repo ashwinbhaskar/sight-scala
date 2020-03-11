@@ -57,8 +57,7 @@ given Encoder[Page]
         ("FileIndex", Json.fromInt(p.fileIndex)),
         ("PageNumber", Json.fromInt(p.pageNumber)),
         ("NumberOfPagesInFile", Json.fromInt(p.numberOfPagesInFile)),
-        ("RecognizedText", p.recognizedText.asJson)
-    )
+        ("RecognizedText", p.recognizedText.asJson))
 
 given Decoder[Pages]
     def apply(c: HCursor): Result[Pages] = 
@@ -69,5 +68,4 @@ given Decoder[Pages]
 
 given Encoder[Pages]
     def apply(ps: Pages): Json = Json.obj(
-        ("Pages", ps.pages.asJson)
-    )
+        ("Pages", ps.pages.asJson))
