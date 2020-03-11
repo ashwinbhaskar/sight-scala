@@ -59,4 +59,15 @@ given Encoder[Page]
         ("NumberOfPagesInFile", Json.fromInt(p.numberOfPagesInFile)),
         ("RecognizedText", p.recognizedText.asJson)
     )
-    
+
+given Decoder[Pages]
+    def apply(c: HCursor): Result[Pages] = 
+        for {
+            pages <- c.get[Seq[Page]]("Pages")
+        } yield
+            Pages(pages)
+
+given Encoder[Pages]
+    def apply(ps: Pages): Json = Json.obj(
+        ("Pages", ps.pages.asJson)
+    )
