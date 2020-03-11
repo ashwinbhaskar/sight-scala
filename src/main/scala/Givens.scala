@@ -2,11 +2,12 @@ package givens
 
 import io.circe.Decoder
 import io.circe.Decoder.Result
-import models.RecognizedText
+import models.{RecognizedText, Page, Pages}
 import io.circe.HCursor
 import io.circe.Encoder
 import io.circe.Decoder
 import io.circe.Json
+import io.circe.syntax._
 
 given Decoder[RecognizedText] 
     def apply(c: HCursor): Result[RecognizedText] = 
@@ -38,5 +39,24 @@ given Encoder[RecognizedText]
         ("BottomRightX", Json.fromInt(rt.bottomRightX)),
         ("BottomRightY", Json.fromInt(rt.bottomRightY)))
 
+given Decoder[Page]
+    def apply(c: HCursor): Result[Page] =
+        for {
+            error <- c.get[Option[String]]("Error")
+            mappedError <- Right(error.flatMap(a => if(a.isEmpty) None else Some(a)))
+            fileIndex <- c.get[Int]("FileIndex")
+            pageNumber <- c.get[Int]("PageNumber")
+            numberOfPagesInFile <- c.get[Int]("NumberOfPagesInFile")
+            recognizedText <- c.get[Seq[RecognizedText]]("RecognizedText") 
+        } yield 
+            Page(error, fileIndex, pageNumber, numberOfPagesInFile, recognizedText)
 
+given Encoder[Page]
+    def apply(p: Page): Json = Json.obj(
+        ("Error", if(p.error.isEmpty || p.error.get.isEmpty) Json.Null else Json.fromString(p.error.get)),
+        ("FileIndex", Json.fromInt(p.fileIndex)),
+        ("PageNumber", Json.fromInt(p.pageNumber)),
+        ("NumberOfPagesInFile", Json.fromInt(p.numberOfPagesInFile)),
+        ("RecognizedText", p.recognizedText.asJson)
+    )
     
