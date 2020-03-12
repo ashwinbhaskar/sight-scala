@@ -1,7 +1,7 @@
 package types
 
-import errors.Error
-import errors.Error._
+import models.Error
+import models.Error._
 
 opaque type APIKey = String
 object APIKey

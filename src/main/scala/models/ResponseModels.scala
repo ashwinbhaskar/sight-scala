@@ -1,7 +1,5 @@
 package models
 
-// import io.circe.generic.extras._
-import io.circe.Codec
 case class RecognizedText(text: String,  confidence: String,  topLeftX: Int
 , topLeftY: Int, topRightX: Int,topRightY: Int
 ,  bottomLeftX: Int,  bottomLeftY: Int
