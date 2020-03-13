@@ -2,7 +2,7 @@ package givens
 
 import io.circe.Decoder
 import io.circe.Decoder.Result
-import models.{RecognizedText, Page, Pages, RecognizedTexts}
+import models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
 import io.circe.HCursor
 import io.circe.Encoder
 import io.circe.Decoder
@@ -76,3 +76,11 @@ given Decoder[Pages]
 given Encoder[Pages]
     def apply(ps: Pages): Json = Json.obj(
         ("Pages", ps.pages.asJson))
+
+given Decoder[PollingUrl]
+    def apply(c: HCursor): Result[PollingUrl] = 
+        c.get[String]("PollingURL").map(PollingUrl)
+
+given Encoder[PollingUrl]
+    def apply(pu: PollingUrl): Json = Json.obj(
+        ("PollingURL", Json.fromString(pu.pollingUrl)))
