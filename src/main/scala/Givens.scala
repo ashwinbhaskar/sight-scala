@@ -2,7 +2,7 @@ package givens
 
 import io.circe.Decoder
 import io.circe.Decoder.Result
-import models.{RecognizedText, Page, Pages}
+import models.{RecognizedText, Page, Pages, RecognizedTexts}
 import io.circe.HCursor
 import io.circe.Encoder
 import io.circe.Decoder
@@ -38,7 +38,14 @@ given Encoder[RecognizedText]
         ("BottomLeftY", Json.fromInt(rt.bottomLeftY)),
         ("BottomRightX", Json.fromInt(rt.bottomRightX)),
         ("BottomRightY", Json.fromInt(rt.bottomRightY)))
+    
+given Decoder[RecognizedTexts]
+    def apply(c: HCursor): Result[RecognizedTexts] = 
+        c.get[Seq[RecognizedText]]("RecognizedText").map(RecognizedTexts)
 
+given Encoder[RecognizedTexts]
+    def apply(rts: RecognizedTexts): Json = Json.obj(
+        ("RecognizedText", rts.recognizedTexts.asJson))
 given Decoder[Page]
     def apply(c: HCursor): Result[Page] =
         for {
