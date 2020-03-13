@@ -5,6 +5,8 @@ case class RecognizedText(text: String,  confidence: String,  topLeftX: Int
 ,  bottomLeftX: Int,  bottomLeftY: Int
 ,  bottomRightX: Int, bottomRightY: Int)
 
+case class RecognizedTexts(recognizedTexts: Seq[RecognizedText])
+
 case class Page(error: Option[String], fileIndex: Int
 , pageNumber: Int,  numberOfPagesInFile: Int
 , recognizedText: Seq[RecognizedText])
