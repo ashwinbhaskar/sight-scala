@@ -1,5 +1,5 @@
 import io.circe.{Encoder, Decoder}
-import models.{RecognizedText, Page, Pages}
+import models.{RecognizedText, Page, Pages, RecognizedTexts}
 import io.circe.syntax.{given _}
 import io.circe.Json
 import munit.Location.generate
@@ -27,6 +27,20 @@ class JsonTest extends munit.FunSuite
         expected.as[RecognizedText] match 
             case Left(failure) => assertFail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, recognizedText)
+    }
+
+    import givens.{given Encoder[RecognizedTexts], given Decoder[RecognizedTexts]}
+    test("Should encode and decode recognized texts correctly") {
+        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedTexts = RecognizedTexts(Seq(recognizedText))
+        val expected: Json = Json.obj(
+            ("RecognizedText", Seq(recognizedText).asJson))
+        val actual = recognizedTexts.asJson
+        assertEquals(actual, expected)
+
+        expected.as[RecognizedTexts] match
+            case Left(failure) => assertFail(s"failed with $failure")
+            case Right(decoded) => assertEquals(decoded, recognizedTexts)
     }
 
     import givens.{given Encoder[Page], given Decoder[Page]}
