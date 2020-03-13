@@ -10,12 +10,10 @@ lazy val root = project
 
     libraryDependencies ++= Seq(
       "com.novocode" % "junit-interface" % "0.11" % "test",
-      "com.softwaremill.sttp.client" % "core_2.13" % "2.0.2",
-      "io.circe" %% "circe-core" % circeVersion,
-      "io.circe" %% "circe-jawn" % circeVersion,
-      "io.circe" %% "circe-generic" % circeVersion,
-      "io.circe" %% "circe-numbers" % circeVersion,
-      "org.scalameta" % "munit_0.22" % "0.5.2"
+      "org.scalameta" % "munit_0.22" % "0.5.2",
+      "com.softwaremill.sttp.client" % "core_2.13" % "2.0.4",
+      "com.softwaremill.sttp.client" % "circe_2.13" % "2.0.4",
+      "org.typelevel" % "cats-core_2.13" % "2.0.0"
     ),
     testFrameworks += new TestFramework("munit.Framework")
  )
