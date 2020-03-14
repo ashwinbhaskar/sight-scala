@@ -1,6 +1,6 @@
 package models
 
-case class RecognizedText(text: String,  confidence: String,  topLeftX: Int
+case class RecognizedText(text: String,  confidence: Double,  topLeftX: Int
 , topLeftY: Int, topRightX: Int,topRightY: Int
 ,  bottomLeftX: Int,  bottomLeftY: Int
 ,  bottomRightX: Int, bottomRightY: Int)

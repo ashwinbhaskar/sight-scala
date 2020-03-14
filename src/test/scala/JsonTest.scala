@@ -9,10 +9,10 @@ class JsonTest extends munit.FunSuite
 
     import givens.{given Encoder[RecognizedText],given Decoder[RecognizedText]}
     test("Should encode and decode recognized text json correctly") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val expected: Json = Json.obj(
         ("Text", Json.fromString("foo-text")),
-        ("Confidence", Json.fromString("foo-confidence")),
+        ("Confidence", Json.fromDouble(0.22863210084975458).get),
         ("TopLeftX", Json.fromInt(1)),
         ("TopLeftY", Json.fromInt(2)),
         ("TopRightX", Json.fromInt(3)),
@@ -31,7 +31,7 @@ class JsonTest extends munit.FunSuite
 
     import givens.{given Encoder[RecognizedTexts], given Decoder[RecognizedTexts]}
     test("Should encode and decode recognized texts correctly") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val recognizedTexts = RecognizedTexts(Seq(recognizedText))
         val expected: Json = Json.obj(
             ("RecognizedText", Seq(recognizedText).asJson))
@@ -45,7 +45,7 @@ class JsonTest extends munit.FunSuite
 
     import givens.{given Encoder[Page], given Decoder[Page]}
     test("Should encode and decode page json correctly when Error is None") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
         val expected: Json = Json.obj(
             ("Error", Json.Null),
@@ -61,7 +61,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, page)
     }
     test("Should encode and decode page json correctly when Error is NOT None but IS empty") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(Some(""), 0, 1, 3, Seq(recognizedText))
         val expected: Json = Json.obj(
             ("Error", Json.Null),
@@ -77,7 +77,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, page.copy(error = None))
     }
     test("Should encode and decode page json correctly when Error is NOT empty") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(Some("There was an error"), 0, 1, 3, Seq(recognizedText))
         val expected: Json = Json.obj(
             ("Error", Json.fromString("There was an error")),
@@ -95,7 +95,7 @@ class JsonTest extends munit.FunSuite
     
     import givens.{given Encoder[Pages], given Decoder[Pages]}
     test("Should encode and decode pages json correctly") {
-        val recognizedText = RecognizedText("foo-text", "foo-confidence", 1, 2, 3, 4, 5, 6, 7, 8)
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
         val pages: Pages = Pages(Seq(page))
         

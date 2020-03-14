@@ -13,7 +13,7 @@ given Decoder[RecognizedText]
     def apply(c: HCursor): Result[RecognizedText] = 
         for {
             text <- c.get[String]("Text")
-            confidence <- c.get[String]("Confidence")
+            confidence <- c.get[Double]("Confidence")
             topLeftX <- c.get[Int]("TopLeftX")
             topLeftY <- c.get[Int]("TopLeftY")
             topRightX <- c.get[Int]("TopRightX")
@@ -29,7 +29,7 @@ given Decoder[RecognizedText]
 given Encoder[RecognizedText]
     def apply(rt: RecognizedText): Json = Json.obj(
         ("Text", Json.fromString(rt.text)),
-        ("Confidence", Json.fromString(rt.confidence)),
+        ("Confidence", Json.fromDouble(rt.confidence).get),
         ("TopLeftX", Json.fromInt(rt.topLeftX)),
         ("TopRightX", Json.fromInt(rt.topRightX)),
         ("TopRightY", Json.fromInt(rt.topRightY)),
