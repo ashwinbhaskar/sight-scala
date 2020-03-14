@@ -6,8 +6,7 @@ import sight.models.Error._
 import sight.models.Error
 import sight.types.APIKey
 import sight.client.SightClientImpl
-import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody}
-import sttp.client.HttpURLConnectionBackend
+import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody, HttpURLConnectionBackend}
 import sttp.model.Method.{GET, POST}
 import sttp.model.{StatusCode, Header}
 import sttp.client.ws.WebSocketResponse
