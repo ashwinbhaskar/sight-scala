@@ -8,8 +8,9 @@ enum MimeType(val strRep: String)
     case JPG extends MimeType("image/jpg")
     case JPEG extends MimeType("image/jpeg")
     case PNG extends MimeType("image/png")
-    
-    def fromExtenstion(ext: String): Either[Error, MimeType] = ext match
+
+object MimeType
+    def fromExtension(ext: String): Either[Error, MimeType] = ext match
         case "gif" => Right(GIF)
         case "bmp" => Right(BMP)
         case "pdf" => Right(PDF)
