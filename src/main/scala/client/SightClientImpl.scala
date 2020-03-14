@@ -1,16 +1,15 @@
-package impl
+package sight.client
 
-import types.APIKey
-import models.{Pages, MimeType, RecognizedTexts, PollingUrl, Page}
-import contracts.{FileContentReader, SightClient}
-import models.Error
-import models.Error.{DecodingFailure, ErrorResponse}
+import sight.types.APIKey
+import sight.models.{Pages, MimeType, RecognizedTexts, PollingUrl, Page}
+import sight.models.Error
+import sight.models.Error.{DecodingFailure, ErrorResponse}
 import sttp.client._
 import sttp.client.circe._
 import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 import io.circe.parser.decode
-import givens.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
+import sight.givens.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
 import cats.implicits.{given _}
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}

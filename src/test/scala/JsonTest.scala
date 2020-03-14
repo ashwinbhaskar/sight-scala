@@ -1,5 +1,5 @@
 import io.circe.{Encoder, Decoder}
-import models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
+import sight.models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
 import io.circe.syntax.{given _}
 import io.circe.Json
 import munit.Location.generate
@@ -7,7 +7,7 @@ import munit.Location.generate
 
 class JsonTest extends munit.FunSuite
 
-    import givens.{given Encoder[RecognizedText],given Decoder[RecognizedText]}
+    import sight.givens.{given Encoder[RecognizedText],given Decoder[RecognizedText]}
     test("Should encode and decode recognized text json correctly") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val expected: Json = Json.obj(
@@ -29,7 +29,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, recognizedText)
     }
 
-    import givens.{given Encoder[RecognizedTexts], given Decoder[RecognizedTexts]}
+    import sight.givens.{given Encoder[RecognizedTexts], given Decoder[RecognizedTexts]}
     test("Should encode and decode recognized texts correctly") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val recognizedTexts = RecognizedTexts(Seq(recognizedText))
@@ -43,7 +43,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, recognizedTexts)
     }
 
-    import givens.{given Encoder[Page], given Decoder[Page]}
+    import sight.givens.{given Encoder[Page], given Decoder[Page]}
     test("Should encode and decode page json correctly when Error is None") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
@@ -93,7 +93,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, page)
     }
     
-    import givens.{given Encoder[Pages], given Decoder[Pages]}
+    import sight.givens.{given Encoder[Pages], given Decoder[Pages]}
     test("Should encode and decode pages json correctly") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
@@ -109,7 +109,7 @@ class JsonTest extends munit.FunSuite
             case Right(decoded) => assertEquals(decoded, pages)
     }
 
-    import givens.{given Encoder[PollingUrl], given Decoder[PollingUrl]}
+    import sight.givens.{given Encoder[PollingUrl], given Decoder[PollingUrl]}
     test("Should encode and decode polling url correctly") {
         val pollingUrl = PollingUrl("http://foo.com")
         val expected: Json = Json.obj(

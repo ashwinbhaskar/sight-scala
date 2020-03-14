@@ -1,8 +1,8 @@
-package givens
+package sight.givens
 
 import io.circe.Decoder
 import io.circe.Decoder.Result
-import models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
+import sight.models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
 import io.circe.HCursor
 import io.circe.Encoder
 import io.circe.Decoder

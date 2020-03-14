@@ -1,7 +1,7 @@
-package types
+package sight.types
 
-import models.Error
-import models.Error._
+import sight.models.Error
+import sight.models.Error._
 
 opaque type APIKey = String
 object APIKey

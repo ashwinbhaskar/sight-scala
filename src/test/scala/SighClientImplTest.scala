@@ -1,11 +1,11 @@
 import munit.FunSuite
-import models.{MimeType,RecognizedText, RecognizedTexts, Page, Pages}
-import models.MimeType._
-import contracts.FileContentReader
-import models.Error._
-import models.Error
-import types.APIKey
-import impl.SightClientImpl
+import sight.models.{MimeType,RecognizedText, RecognizedTexts, Page, Pages}
+import sight.models.MimeType._
+import sight.client.FileContentReader
+import sight.models.Error._
+import sight.models.Error
+import sight.types.APIKey
+import sight.client.SightClientImpl
 import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody}
 import sttp.client.HttpURLConnectionBackend
 import sttp.model.Method.{GET, POST}
@@ -19,13 +19,11 @@ import scala.collection.mutable.ListBuffer
 class SightClientImplTest extends FunSuite
 
     private val postArgs: ListBuffer[(String, String, String)] = ListBuffer() //Url, payload, Auth
-
     private val getArgs: ListBuffer[(String, String)] = ListBuffer() //url, Auth
+    
     override def beforeEach(context: BeforeEach): Unit = 
         postArgs.clear
         getArgs.clear
-
-
 
     given SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
     def withSttpBackend[M](postResponse: Either[String, String], getResponse: Either[String, String]) = new SttpBackend[Identity, Nothing, NothingT] with

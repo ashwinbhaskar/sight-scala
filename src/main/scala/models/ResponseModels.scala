@@ -1,4 +1,4 @@
-package models
+package sight.models
 
 case class RecognizedText(text: String,  confidence: Double,  topLeftX: Int
 , topLeftY: Int, topRightX: Int,topRightY: Int

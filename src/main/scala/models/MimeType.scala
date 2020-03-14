@@ -1,4 +1,4 @@
-package models
+package sight.models
 import Error.InvalidExtension
 
 enum MimeType(val strRep: String)
