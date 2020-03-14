@@ -13,7 +13,8 @@ lazy val root = project
       "org.scalameta" % "munit_0.22" % "0.5.2",
       "com.softwaremill.sttp.client" % "core_2.13" % "2.0.4",
       "com.softwaremill.sttp.client" % "circe_2.13" % "2.0.4",
-      "org.typelevel" % "cats-core_2.13" % "2.0.0"
+      "org.typelevel" % "cats-core_2.13" % "2.0.0",
+       "commons-codec" % "commons-codec" % "1.9"
     ),
     testFrameworks += new TestFramework("munit.Framework")
  )
