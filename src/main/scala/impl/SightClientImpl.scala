@@ -7,13 +7,10 @@ import models.Error
 import models.Error.{DecodingFailure, ErrorResponse}
 import sttp.client._
 import sttp.client.circe._
-import io.circe.Json
-import io.circe.Encoder
+import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 import io.circe.parser.decode
-import io.circe.Decoder
 import givens.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
-import sttp.client.circe.circeBodySerializer
 import cats.implicits.{given _}
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}
