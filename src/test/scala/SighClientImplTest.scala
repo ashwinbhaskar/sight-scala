@@ -6,9 +6,12 @@ import models.Error._
 import models.Error
 import types.APIKey
 import impl.SightClientImpl
+import sttp.client.{SttpBackend, Identity, NothingT}
+import sttp.client.HttpURLConnectionBackend
 
 class SightClientImplTest extends FunSuite
 
+    given SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
     private val apiKey: APIKey = APIKey("12345678-1234-1234-123456781234") match
         case Right(apiKey) => apiKey
         case Left(err) => throw new Exception(s"Unexpected error $err")
