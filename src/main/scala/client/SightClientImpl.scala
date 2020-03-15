@@ -31,15 +31,18 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         pages.filter(_.pageNumber >= 0).foreach{ page => 
             if(pageSeenTracker(page.fileIndex).size != page.numberOfPagesInFile)
                 pageSeenTracker(page.fileIndex) = Array.fill(page.numberOfPagesInFile)(false)
-            pageSeenTracker(page.fileIndex)(page.pageNumber) = true
+            pageSeenTracker(page.fileIndex)(page.pageNumber - 1) = true
         }
+    
+    private def isSeenAllPages(pageSeenTracker: Array[Array[Boolean]]): Boolean = 
+        pageSeenTracker.forall(_.foldLeft(true)(_ && _))
 
     private def handlePollingUrl(url: String, numberOfFiles: Int): Either[Error, Pages] = 
         var pages = List[Page]()
         val pageSeenTracker: Array[Array[Boolean]] = Array.fill(numberOfFiles)(Array(false))
         def decodePages(p: String): Either[Error, Pages] = decode[Pages](p).left.map(e => ErrorResponse(e.toString))
         var error: Option[Error] = None
-        while(error.isEmpty && pageSeenTracker.forall(_.foldLeft(true)(_ && _)))
+        while(error.isEmpty && !isSeenAllPages(pageSeenTracker))
             val request = basicRequest.header("Authorization", s"Basic $apiKey").get(uri"$url")
             val response = request.send()
             response.body.fold[Either[Error, Pages]](fa = ErrorResponse(_).asLeft[Pages], fb = decodePages) match
