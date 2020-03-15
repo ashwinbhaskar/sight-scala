@@ -69,10 +69,7 @@ given Encoder[Page]
 
 given Decoder[Pages]
     def apply(c: HCursor): Result[Pages] = 
-        for {
-            pages <- c.get[Seq[Page]]("Pages")
-        } yield
-            Pages(pages)
+        c.get[Seq[Page]]("Pages").map(Pages)
 
 given Encoder[Pages]
     def apply(ps: Pages): Json = Json.obj(
