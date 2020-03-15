@@ -42,7 +42,7 @@ class SightClientImplTest extends FunSuite
         def responseMonad: MonadError[Identity] = IdMonad
 
     
-    private val apiKey: APIKey = APIKey("12345678-1234-1234-123456781234") match
+    private val apiKey: APIKey = APIKey("12345678-1234-1234-1234-123456781234") match
         case Right(apiKey) => apiKey
         case Left(err) => throw new Exception(s"Unexpected error $err")
 
@@ -100,7 +100,7 @@ class SightClientImplTest extends FunSuite
             case Left(error) => assertFail(s"Unexpected error $error")
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
-        val expectedAuth = "Authorization: Basic 12345678-1234-1234-123456781234"
+        val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
         val expectedUrl = "https://siftrics.com/api/sight/"
         assertEquals(postArgs.head, (expectedUrl, expectedPayload, expectedAuth))
     }
