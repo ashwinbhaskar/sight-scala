@@ -49,7 +49,6 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
                 case Left(err) => error = Some(err)
                 case Right(p) => pages = pages ++ p.pages
                     markSeen(pageSeenTracker, p.pages)
-        
         error.fold(Pages(pages).asRight[Error])(_.asLeft[Pages])
 
     
