@@ -3,100 +3,17 @@ import sight.models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
 import io.circe.syntax.{given _}
 import io.circe.Json
 import munit.Location.generate
+import io.circe.parser.decode
 
 
 class JsonTest extends munit.FunSuite
 
-    import sight.givens.{given Encoder[RecognizedText],given Decoder[RecognizedText]}
-    test("Should encode and decode recognized text json correctly") {
-        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
-        val expected: Json = Json.obj(
-        ("Text", Json.fromString("foo-text")),
-        ("Confidence", Json.fromDouble(0.22863210084975458).get),
-        ("TopLeftX", Json.fromInt(1)),
-        ("TopLeftY", Json.fromInt(2)),
-        ("TopRightX", Json.fromInt(3)),
-        ("TopRightY", Json.fromInt(4)),
-        ("BottomLeftX", Json.fromInt(5)),
-        ("BottomLeftY", Json.fromInt(6)),
-        ("BottomRightX", Json.fromInt(7)),
-        ("BottomRightY", Json.fromInt(8)))
-        val actual: Json = recognizedText.asJson
-        assertEquals(actual, expected)
 
-        expected.as[RecognizedText] match 
-            case Left(failure) => assertFail(s"failed with $failure")
-            case Right(decoded) => assertEquals(decoded, recognizedText)
-    }
-
-    import sight.givens.{given Encoder[RecognizedTexts], given Decoder[RecognizedTexts]}
-    test("Should encode and decode recognized texts correctly") {
-        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
-        val recognizedTexts = RecognizedTexts(Seq(recognizedText))
-        val expected: Json = Json.obj(
-            ("RecognizedText", Seq(recognizedText).asJson))
-        val actual = recognizedTexts.asJson
-        assertEquals(actual, expected)
-
-        expected.as[RecognizedTexts] match
-            case Left(failure) => assertFail(s"failed with $failure")
-            case Right(decoded) => assertEquals(decoded, recognizedTexts)
-    }
-
-    import sight.givens.{given Encoder[Page], given Decoder[Page]}
-    test("Should encode and decode page json correctly when Error is None") {
+    import sight.givens.{given Encoder[Pages], given Decoder[Pages], given Encoder[Page]}
+    test("Should encode and decode json correctly when error is Empty String") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
-        val expected: Json = Json.obj(
-            ("Error", Json.Null),
-            ("FileIndex", Json.fromInt(0)),
-            ("PageNumber", Json.fromInt(1)),
-            ("NumberOfPagesInFile", Json.fromInt(3)),
-            ("RecognizedText", page.recognizedText.asJson)
-        )
-        val actual: Json = page.asJson
-        assertEquals(actual, expected)
-        expected.as[Page] match
-            case Left(failure) => assertFail(s"failed with $failure")
-            case Right(decoded) => assertEquals(decoded, page)
-    }
-    test("Should encode and decode page json correctly when Error is NOT None but IS empty") {
-        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
-        val page: Page = Page(Some(""), 0, 1, 3, Seq(recognizedText))
-        val expected: Json = Json.obj(
-            ("Error", Json.Null),
-            ("FileIndex", Json.fromInt(0)),
-            ("PageNumber", Json.fromInt(1)),
-            ("NumberOfPagesInFile", Json.fromInt(3)),
-            ("RecognizedText", page.recognizedText.asJson)
-        )
-        val actual: Json = page.asJson
-        assertEquals(actual, expected)
-        expected.as[Page] match
-            case Left(failure) => assertFail(s"failed with $failure")
-            case Right(decoded) => assertEquals(decoded, page.copy(error = None))
-    }
-    test("Should encode and decode page json correctly when Error is NOT empty") {
-        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
-        val page: Page = Page(Some("There was an error"), 0, 1, 3, Seq(recognizedText))
-        val expected: Json = Json.obj(
-            ("Error", Json.fromString("There was an error")),
-            ("FileIndex", Json.fromInt(0)),
-            ("PageNumber", Json.fromInt(1)),
-            ("NumberOfPagesInFile", Json.fromInt(3)),
-            ("RecognizedText", page.recognizedText.asJson)
-        )
-        val actual: Json = page.asJson
-        assertEquals(actual, expected)
-        expected.as[Page] match
-            case Left(failure) => assertFail(s"failed with $failure")
-            case Right(decoded) => assertEquals(decoded, page)
-    }
-    
-    import sight.givens.{given Encoder[Pages], given Decoder[Pages]}
-    test("Should encode and decode pages json correctly") {
-        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
-        val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
+        
         val pages: Pages = Pages(Seq(page))
         
         val expected: Json = Json.obj(
@@ -104,7 +21,55 @@ class JsonTest extends munit.FunSuite
         )
         val actual: Json = pages.asJson
         assertEquals(actual, expected)
-        expected.as[Pages] match
+        val pagesString: String = """
+            {"Pages": [{"Error": "",
+            "FileIndex":0,
+            "PageNumber":1,
+            "NumberOfPagesInFile":3,
+            "RecognizedText":[{"Text":"foo-text",
+                               "Confidence": 0.22863210084975458,
+                               "TopLeftX":1,
+                               "TopLeftY":2,
+                               "TopRightX":3,
+                               "TopRightY":4,
+                               "BottomLeftX":5,
+                               "BottomLeftY":6,
+                               "BottomRightX":7,
+                               "BottomRightY":8}]}]}
+        """
+        decode[Pages](pagesString) match
+            case Left(failure) => assertFail(s"failed with $failure")
+            case Right(decoded) => assertEquals(decoded, pages)
+    }
+
+    test("Should encode and decode json correctly when error is NOT an Empty String") {
+        val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
+        val page: Page = Page(Some("there was an error"), 0, 1, 3, Seq(recognizedText))
+        
+        val pages: Pages = Pages(Seq(page))
+        
+        val expected: Json = Json.obj(
+            ("Pages", Seq(page).asJson)
+        )
+        val actual: Json = pages.asJson
+        assertEquals(actual, expected)
+        val pagesString: String = """
+            {"Pages": [{"Error": "there was an error",
+            "FileIndex":0,
+            "PageNumber":1,
+            "NumberOfPagesInFile":3,
+            "RecognizedText":[{"Text":"foo-text",
+                               "Confidence": 0.22863210084975458,
+                               "TopLeftX":1,
+                               "TopLeftY":2,
+                               "TopRightX":3,
+                               "TopRightY":4,
+                               "BottomLeftX":5,
+                               "BottomLeftY":6,
+                               "BottomRightX":7,
+                               "BottomRightY":8}]}]}
+        """
+        decode[Pages](pagesString) match
             case Left(failure) => assertFail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, pages)
     }
@@ -116,7 +81,10 @@ class JsonTest extends munit.FunSuite
             ("PollingURL", Json.fromString("http://foo.com")))
         val actual: Json = pollingUrl.asJson
         assertEquals(actual, expected)
-        expected.as[PollingUrl] match
+        val stringResponse = """
+            {"PollingURL":"http://foo.com"}
+        """
+        decode[PollingUrl](stringResponse) match
             case Left(failure) => assertFail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, pollingUrl)
     }
