@@ -55,8 +55,9 @@ given Decoder[Page]
             pageNumber <- c.get[Int]("PageNumber")
             numberOfPagesInFile <- c.get[Int]("NumberOfPagesInFile")
             recognizedText <- c.get[Seq[RecognizedText]]("RecognizedText") 
-        } yield 
-            Page(error, fileIndex, pageNumber, numberOfPagesInFile, recognizedText)
+        } yield
+            val sanitizedError = error.flatMap((e: String) => if(e.isEmpty) None else Some(e))
+            Page(sanitizedError, fileIndex, pageNumber, numberOfPagesInFile, recognizedText)
 
 given Encoder[Page]
     def apply(p: Page): Json = Json.obj(
