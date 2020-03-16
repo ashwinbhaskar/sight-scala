@@ -9,6 +9,7 @@ import sight.types.APIKey
 import sight.models.{Error, Pages}
 
 val apiKey: Either[Error, APIKey] = APIKey("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
-val result: Either[Error, Pages] = apiKey.flatMap(k => SightClient(k).recognize(Seq("/user/john.doe/foo.pdf)))
+val files: Seq[String] = Seq("/user/john.doe/foo.pdf","/user/john.doe/baz/bmp")
+val result: Either[Error, Pages] = apiKey.flatMap(key => SightClient(key).recognize(files))
 
 ```
