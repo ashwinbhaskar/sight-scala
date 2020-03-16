@@ -14,14 +14,14 @@ import cats.implicits.{given _}
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}
 
-class SightClientImpl(private val apiKey: APIKey, private val fileContentReader: FileContentReader)(using SttpBackend[Identity, Nothing, NothingT]) extends SightClient(apiKey, fileContentReader)
+class SightClientImpl(private val apiKey: APIKey, private val fileContentReader: FileContentReader)(using SttpBackend[Identity, Nothing, NothingT]) extends SightClient(apiKey, fileContentReader):
     private case class FileContent(mimeType: MimeType, base64FileContent: String)
     private case class Payload(shouldMakeSentences: Boolean, files: Seq[FileContent])
-    private given Encoder[FileContent]
+    private given Encoder[FileContent]:
         def apply(fileContent: FileContent): Json = Json.obj(
             ("mimeType", Json.fromString(fileContent.mimeType.strRep)),
             ("base64File", Json.fromString(fileContent.base64FileContent)))
-    private given Encoder[Payload]
+    private given Encoder[Payload]:
         def apply(payload: Payload): Json = Json.obj(
             ("makeSentences", Json.fromBoolean(payload.shouldMakeSentences)),
             ("files", payload.files.asJson))

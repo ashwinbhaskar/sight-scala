@@ -2,7 +2,7 @@ import sight.client.FileContentReaderImpl
 import sight.models.MimeType._
 import sight.models.Error.InvalidExtension
 
-class FileContentReaderImplTest extends munit.FunSuite
+class FileContentReaderImplTest extends munit.FunSuite:
     test("Should return correct mime types when valid") {
         val filePaths = Seq("foo/goo.bmp", "baz/de.gif")
         val fileContentReader = new FileContentReaderImpl()
