@@ -1,7 +1,7 @@
 package sight.models
 import Error.InvalidExtension
 
-enum MimeType(val strRep: String)
+enum MimeType(val strRep: String):
     case GIF extends MimeType("image/gif")
     case BMP extends MimeType("image/bmp")
     case PDF extends MimeType("application/pdf")
@@ -9,7 +9,7 @@ enum MimeType(val strRep: String)
     case JPEG extends MimeType("image/jpeg")
     case PNG extends MimeType("image/png")
 
-object MimeType
+object MimeType:
     def fromExtension(ext: String): Either[Error, MimeType] = ext match
         case "gif" => Right(GIF)
         case "bmp" => Right(BMP)

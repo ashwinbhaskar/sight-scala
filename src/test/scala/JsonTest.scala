@@ -6,7 +6,7 @@ import munit.Location.generate
 import io.circe.parser.decode
 
 
-class JsonTest extends munit.FunSuite
+class JsonTest extends munit.FunSuite:
 
 
     import sight.givens.{given Encoder[Pages], given Decoder[Pages], given Encoder[Page]}

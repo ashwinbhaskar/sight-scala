@@ -15,7 +15,7 @@ import io.circe.{Encoder, Decoder}
 import io.circe.syntax.{given _}
 import scala.collection.mutable.ListBuffer
 
-class SightClientImplTest extends FunSuite
+class SightClientImplTest extends FunSuite:
 
     private val postArgs: ListBuffer[(String, String, String)] = ListBuffer() //Url, payload, Auth
     private val getArgs: ListBuffer[(String, String)] = ListBuffer() //url, Auth
@@ -25,9 +25,9 @@ class SightClientImplTest extends FunSuite
         getArgs.clear
 
     given SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
-    def withSttpBackend[M](postResponse: Either[String, String], getResponse: Either[String, String]) = new SttpBackend[Identity, Nothing, NothingT] with
+    def withSttpBackend[M](postResponse: Either[String, String], getResponse: Either[String, String]) = new SttpBackend[Identity, Nothing, NothingT]:
         def send[T](request: Request[T, Nothing]): Response[T] = 
-            if(request.method == POST) 
+            if(request.method == POST)
                 val uri = request.productElement(1)
                 val body: StringBody = request.productElement(2).asInstanceOf[StringBody]
                 val payload = body.productElement(0)
@@ -47,7 +47,7 @@ class SightClientImplTest extends FunSuite
         case Left(err) => throw new Exception(s"Unexpected error $err")
 
     def fileContentReaderWith(fileToBase64: Either[Error, Seq[String]], fileMimeType: Either[Error, Seq[MimeType]]) = 
-        new FileContentReader with
+        new FileContentReader:
             def filesToBase64(filePaths: Seq[String]): Either[Error, Seq[String]] = fileToBase64
             def fileMimeTypes(filePaths: Seq[String]): Either[Error, Seq[MimeType]] = fileMimeType
 

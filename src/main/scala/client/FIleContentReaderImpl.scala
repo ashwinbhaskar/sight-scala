@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Base64
 import java.nio.file.{Files, Paths}
 import scala.collection.mutable.ListBuffer
 
-class FileContentReaderImpl extends FileContentReader
+class FileContentReaderImpl extends FileContentReader:
     def filesToBase64(filePaths: Seq[String]): Either[Error, Seq[String]] = 
         val base64s = ListBuffer[String]()
         var error: Option[Error] = None
