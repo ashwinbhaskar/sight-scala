@@ -12,7 +12,7 @@ val apiKey: Either[Error, APIKey] = APIKey("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 val files: Seq[String] = Seq("/user/john.doe/foo.pdf","/user/john.doe/baz/bmp")
 val result: Either[Error, Pages] = apiKey.flatMap(key => SightClient(key).recognize(files))
 
-import sight.extensions._
+import sight.extensions.pageOps
 
 val allTxt: Either[Error, Seq[String]] = result.map(_.allText)
 val allTxtGt: Either[Error, Seq[String]] = result.map(_.allTextWithConfidenceGreaterThan(0.2))
