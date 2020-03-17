@@ -3,7 +3,7 @@ val circeVersion = "0.13.0"
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "dotty-simple",
+    name := "sight",
     version := "0.1.0",
 
     scalaVersion := dottyVersion,
