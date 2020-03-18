@@ -16,8 +16,11 @@ lazy val root = project
       "commons-codec" % "commons-codec" % "1.9"
     ),
     testFrameworks += new TestFramework("munit.Framework"),
-    jacocoReportSettings := JacocoReportSettings()
-      .withThresholds(
-        JacocoThresholds(line = 80)
-      )
+    jacocoReportSettings := JacocoReportSettings(
+      "Test Coverate Report",
+      None,
+      JacocoThresholds(line = 80),
+      Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
+      "utf-8"
+    )
  )
