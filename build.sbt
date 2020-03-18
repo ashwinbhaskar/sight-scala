@@ -15,5 +15,9 @@ lazy val root = project
       "org.typelevel" % "cats-core_2.13" % "2.0.0",
       "commons-codec" % "commons-codec" % "1.9"
     ),
-    testFrameworks += new TestFramework("munit.Framework")
+    testFrameworks += new TestFramework("munit.Framework"),
+    jacocoReportSettings := JacocoReportSettings()
+      .withThresholds(
+        JacocoThresholds(line = 80)
+      )
  )
