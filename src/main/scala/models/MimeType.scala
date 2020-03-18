@@ -10,7 +10,7 @@ enum MimeType(val strRep: String):
     case PNG extends MimeType("image/png")
 
 object MimeType:
-    def fromExtension(ext: String): Either[Error, MimeType] = ext match
+    def fromExtension(ext: String): Either[Error, MimeType] = ext.toLowerCase match
         case "gif" => Right(GIF)
         case "bmp" => Right(BMP)
         case "pdf" => Right(PDF)
