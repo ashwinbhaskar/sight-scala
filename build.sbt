@@ -22,5 +22,9 @@ lazy val root = project
       JacocoThresholds(line = 80),
       Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
       "utf-8"
-    )
+    ),
+    jacocoExcludes := Seq(
+      "*Error*",
+      "*RecognizedText*",
+      "*RecognizedTexts*")
  )
