@@ -9,7 +9,7 @@ import io.circe.parser.decode
 class JsonTest extends munit.FunSuite:
 
 
-    import sight.givens.{given Encoder[Pages], given Decoder[Pages], given Encoder[Page]}
+    import sight.decoders.{given Encoder[Pages], given Decoder[Pages], given Encoder[Page]}
     test("Should encode and decode json correctly when error is Empty String") {
         val recognizedText = RecognizedText("foo-text", 0.22863210084975458, 1, 2, 3, 4, 5, 6, 7, 8)
         val page: Page = Page(None, 0, 1, 3, Seq(recognizedText))
@@ -74,7 +74,7 @@ class JsonTest extends munit.FunSuite:
             case Right(decoded) => assertEquals(decoded, pages)
     }
 
-    import sight.givens.{given Encoder[PollingUrl], given Decoder[PollingUrl]}
+    import sight.decoders.{given Encoder[PollingUrl], given Decoder[PollingUrl]}
     test("Should encode and decode polling url correctly") {
         val pollingUrl = PollingUrl("http://foo.com")
         val expected: Json = Json.obj(

@@ -9,7 +9,7 @@ import sttp.client.circe._
 import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 import io.circe.parser.decode
-import sight.givens.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
+import sight.decoders.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
 import cats.implicits.{given _}
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}

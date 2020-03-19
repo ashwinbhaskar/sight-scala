@@ -1,4 +1,4 @@
-package sight.givens
+package sight.decoders
 
 import io.circe.Decoder
 import io.circe.Decoder.Result
