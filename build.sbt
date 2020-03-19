@@ -28,6 +28,6 @@ lazy val root = project
       "*RecognizedText*",
       "*RecognizedTexts*",
       "*Payload*",
-      "**/*SightClientImpl$FileContent*"
+      "*SightClient$*"
       )
  )
