@@ -4,6 +4,9 @@ developers := List(Developer("ashwinbhaskar",
                              "Ashwin Bhaskar",
                              "ashwinbhskr@gmail.com",
                              url("https://github.com/ashwinbhaskar")))
+scmInfo := Some(
+  ScmInfo(url("https://github.com/ashwinbhaskar/sight-dotty"),
+    "scm:git@github.com:ashwinbhaskar/sight-dotty.git"))
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 // Add sonatype repository settings
