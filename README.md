@@ -4,17 +4,17 @@ Dotty client library for Sight APIs. The Sight API is a text recognition service
 
 ## Usage Dotty 0.22
 
-- Dependency 
+### Dependency 
 
 ```
 libraryDependencies += "io.github.ashwinbhaskar" %% "sight-client" % "0.1.0"
 ```
 
-- API Key
+### API Key
 
 Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
 
-- Code
+### Code
 
 ```
 import sight.client.SightClient
