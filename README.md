@@ -2,7 +2,7 @@
 Dotty client library for Sight APIs. The Sight API is a text recognition service.
 
 
-# Usage Dotty 0.22
+## Usage Dotty 0.22
 
 - Dependency 
 
@@ -31,6 +31,10 @@ val allTxt: Either[Error, Seq[String]] = result.map(_.allText)
 val allTxtGt: Either[Error, Seq[String]] = result.map(_.allTextWithConfidenceGreaterThan(0.2))
 ```
 
-# Usage in Scala 2.13
+## Official API Documentation 
+
+Here is the official [API Documentation](https://siftrics.com/docs/sight.html)
+
+## Usage in Scala 2.13
 
 There is an an going work on tasty reader for Scala 2.13 (https://github.com/scalacenter/scala/tree/tasty_reader) which can recompile the tasty to Scala 2.13. Until that work is completed, I believe this library cannot be used in scala 2.13.
