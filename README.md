@@ -1,18 +1,20 @@
 # sight-dotty ![Scala CI](https://github.com/ashwinbhaskar/sight-dotty/workflows/Scala%20CI/badge.svg)[![codecov](https://codecov.io/gh/ashwinbhaskar/sight-dotty/branch/master/graph/badge.svg)](https://codecov.io/gh/ashwinbhaskar/sight-dotty)
-Dotty client library for Sight APIs. For details please have a look at the official [clojure library](https://github.com/siftrics/sight-clojure)
+Dotty client library for Sight APIs. The Sight API is a text recognition service.
 
 
-# Usage
+# Usage Dotty 0.22
 
-Works with Dotty `0.22`
-
-sbt 
+- Dependency 
 
 ```
-libraryDependencies += "io.github.ashwinbhaskar" % "sight-client_0.22" % "0.1.0"
+libraryDependencies += "io.github.ashwinbhaskar" %% "sight-client" % "0.1.0"
 ```
 
-In the code
+- API Key
+
+Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
+
+- Code
 
 ```
 import sight.client.SightClient
