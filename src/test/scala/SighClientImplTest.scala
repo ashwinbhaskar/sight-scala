@@ -40,7 +40,9 @@ class SightClientImplTest extends FunSuite:
                 val headers: Vector[Header] = request.productElement(3).asInstanceOf[Vector[Header]]
                 val authorization = headers(1)
                 getArgs.append((uri.toString, authorization.toString))
-                Response(body = getResponse.asInstanceOf[T], code = StatusCode.Ok)
+                getResponse match
+                    case Left(_) => Response(body = getResponse.asInstanceOf[T], code = StatusCode.Unauthorized)
+                    case Right(_) => Response(body = getResponse.asInstanceOf[T], code = StatusCode.Ok)
             else throw Exception(s"Unexpected post method ${request.method}")
         def openWebsocket[T, WS_RESULT](request: Request[T, Nothing], handler: NothingT[WS_RESULT]): Identity[WebSocketResponse[WS_RESULT]] = ???
         def close(): Identity[Unit] = ()
@@ -283,6 +285,26 @@ class SightClientImplTest extends FunSuite:
         actualResponse.head match 
             case Right(pages) => assertEquals(pages, expectedResponse)
             case Left(error) => assertFail(s"Unexpected error $error")
+        assertEquals(actualResponse.force.size, 1)
+        assertEquals(postArgs.size, 1)
+        val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
+        val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
+        assertEquals(postArgs.head, ("https://siftrics.com/api/sight/", expectedPayload, expectedAuth))
+        assertEquals(getArgs.head, ("http://foo-polling-url.com", expectedAuth))
+    }
+
+    test("SightClientImpl should return error when call to PollingURL returns error -  Stream") {
+        val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
+        val response: String = """{"PollingURL":"http://foo-polling-url.com"}"""
+        val pollingUrlResponse: String = """{"message":"Unauthorized"}"""
+        val expectedResponse = ErrorResponse("""{"message":"Unauthorized"}""")
+        given  SttpBackend[Identity, Nothing, NothingT] = withSttpBackend(postResponse = Right(response), getResponse = Left(pollingUrlResponse))
+        val sightClient = new SightClientImpl(apiKey,fileContentReader)
+        val filePaths = Seq("foo/goo.bmp")
+        val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
+        actualResponse.head match 
+            case Right(pages) => assertFail(s"Cannot succeed!")
+            case Left(error) => assertEquals(error, expectedResponse)
         assertEquals(actualResponse.force.size, 1)
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
