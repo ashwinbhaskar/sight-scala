@@ -230,6 +230,25 @@ class SightClientImplTest extends FunSuite:
         assertEquals(getArgs.head, ("http://foo-polling-url.com", expectedAuth))
     }
 
+    test("SightClientImpl should return error when call to PollingURL returns error -  One Shot") {
+        val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
+        val response: String = """{"PollingURL":"http://foo-polling-url.com"}"""
+        val pollingUrlResponse: String = """{"message":"Unauthorized"}"""
+        val expectedResponse = ErrorResponse("""{"message":"Unauthorized"}""")
+        given  SttpBackend[Identity, Nothing, NothingT] = withSttpBackend(postResponse = Right(response), getResponse = Left(pollingUrlResponse))
+        val sightClient = new SightClientImpl(apiKey,fileContentReader)
+        val filePaths = Seq("foo/goo.bmp")
+        val actualResponse: Either[Error, Pages] = sightClient.recognize(filePaths)
+        actualResponse. match 
+            case Right(pages) => assertFail(s"Cannot succeed!")
+            case Left(error) => assertEquals(error, expectedResponse)
+        assertEquals(postArgs.size, 1)
+        val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
+        val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
+        assertEquals(postArgs.head, ("https://siftrics.com/api/sight/", expectedPayload, expectedAuth))
+        assertEquals(getArgs.head, ("http://foo-polling-url.com", expectedAuth))
+    }
+
     test("SightClientImpl should make the http call and return expected result when the content is valid - PollingUrl, Stream") {
         val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
         val response: String = """{"PollingURL":"http://foo-polling-url.com"}"""
