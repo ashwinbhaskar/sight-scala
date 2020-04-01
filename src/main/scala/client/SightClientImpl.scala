@@ -37,6 +37,22 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
                 case Right(p) => pages = pages ++ p.pages
                     markSeen(pageSeenTracker, p.pages)
         error.fold(Pages(pages).asRight[Error])(_.asLeft[Pages])
+
+    private def handlePollingUrlStream(url: String, numberOfFiles: Int): StreamResponse = 
+        val pageSeenTracker: Array[Array[Boolean]] = Array.fill(numberOfFiles)(Array(false))
+        var error: Option[Error] = None
+        def fetch: Either[Error, Seq[Page]] = sightGet(url) match
+            case Left(err) => err.asLeft[Seq[Page]]
+            case Right(p) => 
+                println(s"fetch result = $p")
+                p.pages.asRight[Error]
+        LazyList.continually(fetch).takeWhile{
+            case Left(e) => error = Some(e); true
+            case Right(p) => 
+                if(!isSeenAllPages(pageSeenTracker) && error.isEmpty) {markSeen(pageSeenTracker, p); true}
+                else false
+                
+        }.filter(_.fold(fa = {_ => true}, fb =  _.nonEmpty))
     
     private def decodePostResponse(response: String): DecodedPostResponse = 
         def decodePollingUrl(r: String): Either[Error, PollingUrl] = 
@@ -46,9 +62,11 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
             case Right(rt) => rt.asRight[Error]
 
     private def sightGet(url: String, retryCount: Int = 3): Either[Error, Pages] = 
+        println(s"fetching from polling url $url")
         def decodePages(p: String): Either[Error, Pages] = decode[Pages](p).left.map(e => ErrorResponse(e.toString))
         val request = basicRequest.header("Authorization", s"Basic $apiKey").get(uri"$url")
         val response = request.send()
+        println(s"response status code = ${response.code}")
         if(response.isServerError && retryCount > 0) sightGet(url, retryCount - 1)
         else response.body.left.map(ErrorResponse(_)).flatMap(decodePages)
     
@@ -88,8 +106,18 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
                         val page = Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 1, recognizedText = rt.recognizedTexts)
                         val pages = Pages(Seq(page))
                         Right(pages)
-                    case url: PollingUrl => 
-                        handlePollingUrl(url.pollingUrl, filePaths.size)
+                    case pu: PollingUrl => 
+                        handlePollingUrl(pu.pollingUrl, filePaths.size)
                  }
 
-    override def recognizeStream(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): LazyResponse = ???
+    override def recognizeStream(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): StreamResponse = 
+        def onRecognizedTexts(rt: RecognizedTexts): StreamResponse = 
+            val page = Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 1, recognizedText = rt.recognizedTexts)
+            LazyList((Seq(page).asRight[Error]))
+        getPayload(filePaths, shouldWordLevelBoundBoxes) match
+            case Left(error) => LazyList(Left(error))
+            case Right(payload) => 
+                sightPost(payload).fold[StreamResponse](fa = {(e: Error) => LazyList(e.asLeft[Seq[Page]])}, fb = {
+                    case pu: PollingUrl => handlePollingUrlStream(pu.pollingUrl, filePaths.size)
+                    case rt: RecognizedTexts => onRecognizedTexts(rt)
+                })

@@ -92,7 +92,7 @@ class SightClientImplTest extends FunSuite:
             case Right(_) => assertFail("Should not happen as the file does not exist")
     }
 
-    test("SightClientImpl should make the http call and return expected result when the content is valid - Single Page") {
+    test("SightClientImpl should make the http call and return expected result when the content is valid - Single Page, One Shot") {
         val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
         val response: String = """
         {
@@ -127,9 +127,47 @@ class SightClientImplTest extends FunSuite:
         val expectedUrl = "https://siftrics.com/api/sight/"
         assertEquals(postArgs.head, (expectedUrl, expectedPayload, expectedAuth))
     }
+
+    test("SightClientImpl should make the http call and return expected result when the content is valid - Single Page, Stream") {
+        val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
+        val response: String = """
+        {
+            "RecognizedText": [
+                {
+                    "Text": "Invoice",
+                    "Confidence": 0.22863210084975458,
+                    "TopLeftX": 395,
+                    "TopLeftY": 35,
+                    "TopRightX": 449,
+                    "TopRightY": 35,
+                    "BottomLeftX": 395,
+                    "BottomLeftY": 47,
+                    "BottomRightX": 449,
+                    "BottomRightY": 47
+                }
+            ]
+        }
+        """
+        val expectedResponse = 
+            val rt = RecognizedText("Invoice", 0.22863210084975458, 395, 35, 449, 35, 395, 47, 449, 47)
+            Seq(Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 1, recognizedText = Seq(rt)))
+        given  SttpBackend[Identity, Nothing, NothingT] = withSttpBackend(postResponse = Right(response), getResponse = Right("foo"))
+        val sightClient = new SightClientImpl(apiKey,fileContentReader)
+        val filePaths = Seq("foo/goo.bmp")
+        val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
+        actualResponse.head match 
+            case Right(pages) => assertEquals(pages, expectedResponse)
+            case Left(error) => assertFail(s"Unexpected error $error")
+        assertEquals(actualResponse.force.size, 1)
+        assertEquals(postArgs.size, 1)
+        val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
+        val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
+        val expectedUrl = "https://siftrics.com/api/sight/"
+        assertEquals(postArgs.head, (expectedUrl, expectedPayload, expectedAuth))
+    }
     
 
-    test("SightClientImpl should make the http call and return expected result when the content is valid - PollingUrl") {
+    test("SightClientImpl should make the http call and return expected result when the content is valid - PollingUrl, One Shot") {
         val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
         val response: String = """{"PollingURL":"http://foo-polling-url.com"}"""
         val pollingUrlResponse: String = """
@@ -183,6 +221,69 @@ class SightClientImplTest extends FunSuite:
         sightClient.recognize(filePaths) match 
             case Right(pages) => assertEquals(pages, expectedResponse)
             case Left(error) => assertFail(s"Unexpected error $error")
+        assertEquals(postArgs.size, 1)
+        val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
+        val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
+        assertEquals(postArgs.head, ("https://siftrics.com/api/sight/", expectedPayload, expectedAuth))
+        assertEquals(getArgs.head, ("http://foo-polling-url.com", expectedAuth))
+    }
+
+    test("SightClientImpl should make the http call and return expected result when the content is valid - PollingUrl, Stream") {
+        val fileContentReader = fileContentReaderWith(Right(Seq("foo==")), Right(Seq(BMP)))
+        val response: String = """{"PollingURL":"http://foo-polling-url.com"}"""
+        val pollingUrlResponse: String = """
+        {
+        "Pages":[
+        {   "Error":"",
+            "FileIndex":0,
+            "PageNumber":1,
+            "NumberOfPagesInFile":2,
+            "RecognizedText": [
+                {
+                    "Text": "Invoice",
+                    "Confidence": 0.22863210084975458,
+                    "TopLeftX": 395,
+                    "TopLeftY": 35,
+                    "TopRightX": 449,
+                    "TopRightY": 35,
+                    "BottomLeftX": 395,
+                    "BottomLeftY": 47,
+                    "BottomRightX": 449,
+                    "BottomRightY": 47
+                }
+            ]   
+        },
+        {   "Error":"",
+            "FileIndex":0,
+            "PageNumber":2,
+            "NumberOfPagesInFile":2,
+            "RecognizedText": [
+                {
+                    "Text": "Invoice",
+                    "Confidence": 0.22863210084975458,
+                    "TopLeftX": 395,
+                    "TopLeftY": 35,
+                    "TopRightX": 449,
+                    "TopRightY": 35,
+                    "BottomLeftX": 395,
+                    "BottomLeftY": 47,
+                    "BottomRightX": 449,
+                    "BottomRightY": 47
+                }
+            ]
+        }]}
+        """
+        val expectedResponse = 
+            val rt = RecognizedText("Invoice", 0.22863210084975458, 395, 35, 449, 35, 395, 47, 449, 47)
+            Seq(Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 2, recognizedText = Seq(rt)),Page(error = None, fileIndex = 0, pageNumber = 2, numberOfPagesInFile = 2, recognizedText = Seq(rt)))
+        given  SttpBackend[Identity, Nothing, NothingT] = withSttpBackend(postResponse = Right(response), getResponse = Right(pollingUrlResponse))
+        val sightClient = new SightClientImpl(apiKey,fileContentReader)
+        val filePaths = Seq("foo/goo.bmp")
+        val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
+        actualResponse.head match 
+            case Right(pages) => assertEquals(pages, expectedResponse)
+            case Left(error) => assertFail(s"Unexpected error $error")
+        assertEquals(actualResponse.force.size, 1)
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
         val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"

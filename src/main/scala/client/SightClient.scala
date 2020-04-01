@@ -6,11 +6,11 @@ import sttp.client.{SttpBackend, HttpURLConnectionBackend, Identity, NothingT}
 import scala.collection.immutable.LazyList
 
 trait SightClient(private val apiKey: APIKey, private val fileContentReader: FileContentReader):
-    type LazyResponse = LazyList[Either[Error, Seq[Page]]] | Error
+    type StreamResponse = LazyList[Either[Error, Seq[Page]]]
     def recognize(filePaths: Seq[String]): Either[Error,Pages] = recognize(filePaths, false)
     def recognize(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Pages]
-    def recognizeStream(filePaths: Seq[String]): LazyResponse = recognizeStream(filePaths, false)
-    def recognizeStream(filePaths: Seq[String], shouldWorlLevelBoundBoxes: Boolean): LazyResponse
+    def recognizeStream(filePaths: Seq[String]): StreamResponse = recognizeStream(filePaths, false)
+    def recognizeStream(filePaths: Seq[String], shouldWorlLevelBoundBoxes: Boolean): StreamResponse
 
 object SightClient:
     def apply(apiKey: APIKey): SightClient = 
