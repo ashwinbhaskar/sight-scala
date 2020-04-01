@@ -42,9 +42,6 @@ lazy val root = project
     ),
     jacocoExcludes := Seq(
       "*Error*",
-      "*RecognizedText*",
-      "*RecognizedTexts*",
-      "*Payload*",
-      "*SightClient$*"
+      "*RecognizedText*"
       )
  )
