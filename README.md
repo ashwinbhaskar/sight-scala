@@ -16,7 +16,7 @@ Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
 
 ### Code
 
-1. One Shot: If your files contain a lot of pages then this will take some time as this will return only after all the pages have been processed.
+1. **One Shot**: If your files contain a lot of pages then this will take some time as this will return only after all the pages have been processed. Use the function `recognize` as shown below.
     ```
     import sight.client.SightClient
     import sight.types.APIKey
@@ -31,7 +31,7 @@ Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
     val allTxt: Either[Error, Seq[String]] = result.map(_.allText)
     val allTxtGt: Either[Error, Seq[String]] = result.map(_.allTextWithConfidenceGreaterThan(0.2))
     ```
-2. Stream: You can choose to get pages as and when they are processed. So this returns a LazySequence which can be consumed as a bunch of pages are processed. 
+2. **Stream**: You can choose to get pages as and when they are processed. So this returns a LazySequence which can be consumed as a bunch of pages are processed. Use the function `recognizeStream` as shown below.
 
     ```
     import sight.types.APIKey
