@@ -36,10 +36,10 @@ Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
     ```
     import sight.types.APIKey
     import sight.models.{Error, Page}
-    val apiKey: Either[Error, APIKey] = APIKey("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
-    val files = Seq("/user/john.doe/foo.pdf","/user/john.doe/baz/bmp")Downloads/flight-euro.pdf")
     import sight.client.SightClient
 
+    val apiKey: Either[Error, APIKey] = APIKey("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+    val files = Seq("/user/john.doe/foo.pdf","/user/john.doe/baz/bmp")Downloads/flight-euro.pdf")
     apiKey match
         case Right(k) => 
             val result: LazyList[Either[Error, Seq[Page]]] = SightClient(k).recognizeStream(files)
