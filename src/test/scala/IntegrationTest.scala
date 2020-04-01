@@ -11,7 +11,7 @@ class IntegrationTest extends FunSuite:
         import java.nio.file._
         val file = Paths.get(res.toURI()).toFile()
         val files = Seq(file.getAbsolutePath())
-        val apiKey: Either[Error, APIKey] = APIKey(System.getProperty("API_KEY"))
+        val apiKey: Either[Error, APIKey] = APIKey(System.getenv("API_KEY"))
         val result: Either[Error, Pages] = apiKey.flatMap(k => SightClient(k).recognize(files))
         result match
             case Left(e) => assertFail(s"Unexpected Error $e")
@@ -23,7 +23,7 @@ class IntegrationTest extends FunSuite:
         import java.nio.file._
         val file = Paths.get(res.toURI()).toFile()
         val files = Seq(file.getAbsolutePath())
-        val apiKey: Either[Error, APIKey] = APIKey(System.getProperty("API_KEY"))
+        val apiKey: Either[Error, APIKey] = APIKey(System.getenv("API_KEY"))
         val result: LazyList[Either[Error, Seq[Page]]] = apiKey match
             case Left(e) => assertFail(s"unexpected error $e")
             case Right(k) => SightClient(k).recognizeStream(files)
