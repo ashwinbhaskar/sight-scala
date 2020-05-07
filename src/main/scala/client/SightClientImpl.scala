@@ -13,6 +13,7 @@ import sight.decoders.{given Decoder[Pages], given Decoder[RecognizedTexts], giv
 import cats.implicits.{given _}
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}
+import scala.util.chaining._
 
 class SightClientImpl(private val apiKey: APIKey, private val fileContentReader: FileContentReader)(using SttpBackend[Identity, Nothing, NothingT]) extends SightClient(apiKey, fileContentReader):
     type DecodedPostResponse = Either[Error, PollingUrl | RecognizedTexts]
@@ -41,15 +42,13 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
     private def handlePollingUrlStream(url: String, numberOfFiles: Int): StreamResponse = 
         val pageSeenTracker: Array[Array[Boolean]] = Array.fill(numberOfFiles)(Array(false))
         var errors: List[Error] = List()
-        def fetch: Either[Error, Seq[Page]] = sightGet(url) match
-            case Left(err) => err.asLeft[Seq[Page]]
-            case Right(p) => p.pages.asRight[Error]
+        def fetch: Either[Error, Seq[Page]] = sightGet(url).map(_.pages)
         LazyList.continually(fetch).takeWhile{
             case Left(e) => errors = e :: errors; !(errors.size > 1)
             case Right(p) => 
-                if(!isSeenAllPages(pageSeenTracker) && errors.isEmpty) {markSeen(pageSeenTracker, p); true}
+                if(!isSeenAllPages(pageSeenTracker) && errors.isEmpty) true.tap(_ => markSeen(pageSeenTracker, p))
                 else false             
-        }.filter(_.fold(fa = {_ => true}, fb =  _.nonEmpty))
+        }.filter(_.fold(_ => true, fb =  _.nonEmpty))
     
     private def decodePostResponse(response: String): DecodedPostResponse = 
         def decodePollingUrl(r: String): Either[Error, PollingUrl] = 
