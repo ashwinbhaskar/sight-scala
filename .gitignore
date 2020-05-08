@@ -1,3 +1,7 @@
 .dotty-ide-artifact
 .dotty-ide.json
 target/
+.bloop
+.metals
+_site
+project/metals.sbt
