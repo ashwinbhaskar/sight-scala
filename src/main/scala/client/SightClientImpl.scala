@@ -69,7 +69,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
                     .post(uri"https://siftrics.com/api/sight/")
         val response = request.send()
         if(response.isServerError && retryCount > 0) sightPost(payload, retryCount - 1)
-        else response.body.fold[DecodedPostResponse](fa = ErrorResponse(_).asLeft[PollingUrl | RecognizedTexts], fb = decodePostResponse)
+        else response.body.fold[DecodedPostResponse](ErrorResponse(_).asLeft[PollingUrl | RecognizedTexts], decodePostResponse)
     
     //side effecty function
     private def markSeen(pageSeenTracker: Array[Array[Boolean]], pages: Seq[Page]): Unit = 
@@ -111,7 +111,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         getPayload(filePaths, shouldWordLevelBoundBoxes) match
             case Left(error) => LazyList(Left(error))
             case Right(payload) => 
-                sightPost(payload).fold[StreamResponse](fa = {(e: Error) => LazyList(e.asLeft[Seq[Page]])}, fb = {
+                sightPost(payload).fold[StreamResponse](e => LazyList(e.asLeft[Seq[Page]]), {
                     case pu: PollingUrl => handlePollingUrlStream(pu.pollingUrl, filePaths.size)
                     case rt: RecognizedTexts => onRecognizedTexts(rt)
                 })
