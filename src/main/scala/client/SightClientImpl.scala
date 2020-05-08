@@ -111,7 +111,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         getPayload(filePaths, shouldWordLevelBoundBoxes) match
             case Left(error) => LazyList(Left(error))
             case Right(payload) => 
-                sightPost(payload).fold[StreamResponse](e => LazyList(e.asLeft[Seq[Page]]), {
+                sightPost(payload).fold[StreamResponse](_.asLeft[Seq[Page]].pipe(LazyList(_)), {
                     case pu: PollingUrl => handlePollingUrlStream(pu.pollingUrl, filePaths.size)
                     case rt: RecognizedTexts => onRecognizedTexts(rt)
                 })
