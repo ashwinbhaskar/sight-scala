@@ -2,7 +2,7 @@
 Dotty client library for Sight APIs. The Sight API is a text recognition service.
 
 
-## Usage Dotty 0.22
+## Usage Dotty 0.22, 0.23
 
 ### Dependency 
 
