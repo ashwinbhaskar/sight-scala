@@ -16,7 +16,7 @@ publishTo := Some(
   else
     Opts.resolver.sonatypeStaging
 )
-val dottyVersion = "0.23.0"
+val dottyVersion = "0.24.0"
 val circeVersion = "0.13.0"
 lazy val root = project
   .in(file("."))
