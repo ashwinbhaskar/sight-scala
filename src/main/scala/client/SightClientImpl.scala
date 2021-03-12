@@ -10,7 +10,7 @@ import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 import io.circe.parser.decode
 import sight.decoders.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
-import cats.implicits.{given _}
+import cats.implicits._
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}
 import scala.util.chaining._
@@ -19,11 +19,11 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
     type DecodedPostResponse = Either[Error, PollingUrl | RecognizedTexts]
     private case class FileContent(mimeType: MimeType, base64FileContent: String)
     private case class Payload(shouldMakeSentences: Boolean, files: Seq[FileContent])
-    private given Encoder[FileContent]:
+    private given Encoder[FileContent] with
         def apply(fileContent: FileContent): Json = Json.obj(
             ("mimeType", Json.fromString(fileContent.mimeType.strRep)),
             ("base64File", Json.fromString(fileContent.base64FileContent)))
-    private given Encoder[Payload]:
+    private given Encoder[Payload] with
         def apply(payload: Payload): Json = Json.obj(
             ("makeSentences", Json.fromBoolean(payload.shouldMakeSentences)),
             ("files", payload.files.asJson))

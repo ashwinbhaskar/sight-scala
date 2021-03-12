@@ -1,4 +1,4 @@
-import sight.extensions.pageOps
+import sight.extensions._
 import sight.models.{RecognizedText, Pages, Page}
 
 class PageOpsTest extends munit.FunSuite:

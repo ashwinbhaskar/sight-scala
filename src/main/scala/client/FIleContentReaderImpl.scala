@@ -2,7 +2,7 @@ package sight.client
 
 import sight.models.{MimeType, Error}
 import sight.models.Error.FileDoesNotExist
-import cats.implicits.{given _}
+import cats.implicits._
 import scala.language.implicitConversions
 import org.apache.commons.codec.binary.Base64
 import java.nio.file.{Files, Paths}

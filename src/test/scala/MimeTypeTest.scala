@@ -20,5 +20,5 @@ class MimeTypeTest extends munit.FunSuite:
     test("fromExtension should return an error when an invalid extension is given") {
         MimeType.fromExtension("foo") match 
             case Left(e) => assertEquals(e, InvalidExtension("foo is not a valid file extension. Only bmp, pdf, gif, jpg, jpeg and png are allowed"))
-            case Right(_) => assertFail("Should not happen as the extension is invalid")
+            case Right(_) => fail("Should not happen as the extension is invalid")
     }

@@ -1,7 +1,7 @@
 import sight.types.APIKey
 import sight.models.Error.InvalidAPIKeyFormat
 import sight.models.Error
-import cats.implicits.{given _}
+import cats.implicits._
 import scala.language.implicitConversions
 
 class APIKeyTest extends munit.FunSuite:
@@ -15,5 +15,5 @@ class APIKeyTest extends munit.FunSuite:
     test("Should return APIKey when the format is correct") {
         APIKey("12345678-1234-1234-1234-123456781234") match
             case Right(_) => assert(true)
-            case Left(e) => assertFail(s"failed with $e")
+            case Left(e) => fail(s"failed with $e")
     }

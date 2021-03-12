@@ -1,6 +1,6 @@
 import io.circe.{Encoder, Decoder}
 import sight.models.{RecognizedText, Page, Pages, RecognizedTexts, PollingUrl}
-import io.circe.syntax.{given _}
+import io.circe.syntax._
 import io.circe.Json
 import munit.Location.generate
 import io.circe.parser.decode
@@ -38,7 +38,7 @@ class JsonTest extends munit.FunSuite:
                                "BottomRightY":8}]}]}
         """
         decode[Pages](pagesString) match
-            case Left(failure) => assertFail(s"failed with $failure")
+            case Left(failure) => fail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, pages)
     }
 
@@ -70,7 +70,7 @@ class JsonTest extends munit.FunSuite:
                                "BottomRightY":8}]}]}
         """
         decode[Pages](pagesString) match
-            case Left(failure) => assertFail(s"failed with $failure")
+            case Left(failure) => fail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, pages)
     }
 
@@ -85,7 +85,7 @@ class JsonTest extends munit.FunSuite:
             {"PollingURL":"http://foo.com"}
         """
         decode[PollingUrl](stringResponse) match
-            case Left(failure) => assertFail(s"failed with $failure")
+            case Left(failure) => fail(s"failed with $failure")
             case Right(decoded) => assertEquals(decoded, pollingUrl)
     }
     
