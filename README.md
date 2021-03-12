@@ -1,5 +1,5 @@
 # sight-scala ![Scala CI](https://github.com/ashwinbhaskar/sight-dotty/workflows/Scala%20CI/badge.svg)[![codecov](https://codecov.io/gh/ashwinbhaskar/sight-dotty/branch/master/graph/badge.svg)](https://codecov.io/gh/ashwinbhaskar/sight-dotty)
-Dotty client library for Sight APIs. The Sight API is a text recognition service.
+Scala client library for Sight APIs. The Sight API is a text recognition service.
 
 
 ## Usage Scala 3.0.0-RC1
