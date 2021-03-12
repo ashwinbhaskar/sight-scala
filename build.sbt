@@ -16,17 +16,15 @@ publishTo := Some(
   else
     Opts.resolver.sonatypeStaging
 )
-val dottyVersion = "0.24.0"
 val circeVersion = "0.13.0"
 lazy val root = project
   .in(file("."))
   .settings(
     name := "sight-client",
     version := "0.1.1",
-
-    scalaVersion := dottyVersion,
+    scalaVersion := "3.0.0-RC1",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.5",
+      "org.scalameta" %% "munit" % "0.7.22",
       "com.softwaremill.sttp.client" % "core_2.13" % "2.0.4",
       "com.softwaremill.sttp.client" % "circe_2.13" % "2.0.4",
       "org.typelevel" % "cats-core_2.13" % "2.0.0",
