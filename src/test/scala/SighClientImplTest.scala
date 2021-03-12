@@ -1,9 +1,9 @@
 import munit.FunSuite
-import sight.models.{MimeType,RecognizedText, RecognizedTexts, Page, Pages}
-import sight.models.MimeType._
+import sight.models.{RecognizedText, RecognizedTexts, Page, Pages}
+import sight.adt.{MimeType, Error}
+import sight.adt.MimeType._
 import sight.client.FileContentReader
-import sight.models.Error._
-import sight.models.Error
+import sight.adt.Error._
 import sight.types.APIKey
 import sight.client.SightClientImpl
 import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody, HttpURLConnectionBackend}

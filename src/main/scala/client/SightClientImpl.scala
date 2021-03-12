@@ -1,9 +1,10 @@
 package sight.client
 
-import sight.types.APIKey
-import sight.models.{Pages, MimeType, RecognizedTexts, PollingUrl, Page}
-import sight.models.Error
-import sight.models.Error.{DecodingFailure, ErrorResponse}
+import sight.types.{APIKey, StreamResponse}
+import sight.models.{Pages, RecognizedTexts, PollingUrl, Page}
+import sight.adt.{Error, MimeType}
+import sight.adt.Error.{DecodingFailure, ErrorResponse}
+import sight.extensions._
 import sttp.client._
 import sttp.client.circe._
 import io.circe.{Json, Encoder, Decoder}
@@ -80,9 +81,9 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         }
     
     private def isSeenAllPages(pageSeenTracker: Array[Array[Boolean]]): Boolean = 
-        pageSeenTracker.forall(_.foldLeft(true)(_ && _))
+        pageSeenTracker.forall(_.allTrue)
 
-    private def getPayload(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Payload] = 
+    private def constructPayload(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Payload] = 
         for 
             filePaths1 <- filePaths.asRight[Nothing]
             mimeTypes <- fileContentReader.fileMimeTypes(filePaths1)
@@ -92,7 +93,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
             Payload(shouldWordLevelBoundBoxes, fileContents)
     
     override def recognize(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Pages] = 
-        getPayload(filePaths, shouldWordLevelBoundBoxes) match 
+        constructPayload(filePaths, shouldWordLevelBoundBoxes) match 
             case Left(error) => Left(error)
             case Right(payload) => 
                 sightPost(payload).flatMap{
@@ -108,7 +109,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         def onRecognizedTexts(rt: RecognizedTexts): StreamResponse = 
             val page = Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 1, recognizedText = rt.recognizedTexts)
             LazyList((Seq(page).asRight[Error]))
-        getPayload(filePaths, shouldWordLevelBoundBoxes) match
+        constructPayload(filePaths, shouldWordLevelBoundBoxes) match
             case Left(error) => LazyList(Left(error))
             case Right(payload) => 
                 sightPost(payload).fold[StreamResponse](_.asLeft[Seq[Page]].pipe(LazyList(_)), {

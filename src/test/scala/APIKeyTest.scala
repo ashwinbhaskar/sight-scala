@@ -1,6 +1,6 @@
 import sight.types.APIKey
-import sight.models.Error.InvalidAPIKeyFormat
-import sight.models.Error
+import sight.adt.Error.InvalidAPIKeyFormat
+import sight.adt.Error
 import cats.implicits._
 import scala.language.implicitConversions
 

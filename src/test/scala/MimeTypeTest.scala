@@ -1,6 +1,6 @@
-import sight.models.MimeType
-import sight.models.MimeType._
-import sight.models.Error.InvalidExtension
+import sight.adt.MimeType._
+import sight.adt.MimeType
+import sight.adt.Error.InvalidExtension
 
 
 class MimeTypeTest extends munit.FunSuite:

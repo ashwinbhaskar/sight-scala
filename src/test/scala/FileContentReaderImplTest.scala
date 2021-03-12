@@ -1,6 +1,6 @@
 import sight.client.FileContentReaderImpl
-import sight.models.MimeType._
-import sight.models.Error.InvalidExtension
+import sight.adt.MimeType._
+import sight.adt.Error.InvalidExtension
 
 class FileContentReaderImplTest extends munit.FunSuite:
 

@@ -1,5 +1,6 @@
 import munit.FunSuite
-import sight.models.{Error, Page, Pages}
+import sight.models.{Page, Pages}
+import sight.adt.Error
 import sight.types.APIKey
 import sight.client.SightClient
 import sight.extensions._
