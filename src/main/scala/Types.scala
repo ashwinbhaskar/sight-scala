@@ -1,7 +1,10 @@
 package sight.types
 
-import sight.models.Error
-import sight.models.Error._
+import sight.adt.{Error, MimeType}
+import sight.adt.Error._
+import sight.models.Page
+
+type StreamResponse = LazyList[Either[Error, Seq[Page]]]
 
 opaque type APIKey = String
 object APIKey:

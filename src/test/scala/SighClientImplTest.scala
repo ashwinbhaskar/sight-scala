@@ -1,9 +1,9 @@
 import munit.FunSuite
-import sight.models.{MimeType,RecognizedText, RecognizedTexts, Page, Pages}
-import sight.models.MimeType._
+import sight.models.{RecognizedText, RecognizedTexts, Page, Pages}
+import sight.adt.{MimeType, Error}
+import sight.adt.MimeType._
 import sight.client.FileContentReader
-import sight.models.Error._
-import sight.models.Error
+import sight.adt.Error._
 import sight.types.APIKey
 import sight.client.SightClientImpl
 import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody, HttpURLConnectionBackend}
@@ -12,7 +12,7 @@ import sttp.model.{StatusCode, Header}
 import sttp.client.ws.WebSocketResponse
 import sttp.client.monad.{IdMonad, MonadError}
 import io.circe.{Encoder, Decoder}
-import io.circe.syntax.{given _}
+import io.circe.syntax._
 import scala.collection.mutable.ListBuffer
 
 class SightClientImplTest extends FunSuite:
@@ -65,7 +65,7 @@ class SightClientImplTest extends FunSuite:
         val expected1 = InvalidExtension("invalid extension")
         sightClientImpl1.recognize(filePaths1) match
             case Left(error) => assertEquals(error, expected1)
-            case Right(_) => assertFail("Should not happen as the extension given is invalid")
+            case Right(_) => fail("Should not happen as the extension given is invalid")
 
         val fileContentReader2 = fileContentReaderWith(Left(FileDoesNotExist("file does not exist")), Right(Seq(BMP)))
         val sightClientImpl2 = new SightClientImpl(apiKey, fileContentReader2)
@@ -73,7 +73,7 @@ class SightClientImplTest extends FunSuite:
         val expected2 = FileDoesNotExist("file does not exist")
         sightClientImpl2.recognize(filePaths2) match
             case Left(error) => assertEquals(error, expected2)
-            case Right(_) => assertFail("Should not happen as the file does not exist")
+            case Right(_) => fail("Should not happen as the file does not exist")
     }
 
     test("SightClientImpl should return the same error as FileContenReader - With wordLevelBoundBoxes = true") {
@@ -83,7 +83,7 @@ class SightClientImplTest extends FunSuite:
         val expected1 = InvalidExtension("invalid extension")
         sightClientImpl1.recognize(filePaths1) match
             case Left(error) => assertEquals(error, expected1)
-            case Right(_) => assertFail("Should not happen as the extension given is invalid")
+            case Right(_) => fail("Should not happen as the extension given is invalid")
 
         val fileContentReader2 = fileContentReaderWith(Left(FileDoesNotExist("file does not exist")), Right(Seq(BMP)))
         val sightClientImpl2 = new SightClientImpl(apiKey, fileContentReader2)
@@ -91,7 +91,7 @@ class SightClientImplTest extends FunSuite:
         val expected2 = FileDoesNotExist("file does not exist")
         sightClientImpl2.recognize(filePaths2, true) match
             case Left(error) => assertEquals(error, expected2)
-            case Right(_) => assertFail("Should not happen as the file does not exist")
+            case Right(_) => fail("Should not happen as the file does not exist")
     }
 
     test("SightClientImpl should make the http call and return expected result when the content is valid - Single Page, One Shot") {
@@ -122,7 +122,7 @@ class SightClientImplTest extends FunSuite:
         val filePaths = Seq("foo/goo.bmp")
         sightClient.recognize(filePaths) match 
             case Right(pages) => assertEquals(pages, expectedResponse)
-            case Left(error) => assertFail(s"Unexpected error $error")
+            case Left(error) => fail(s"Unexpected error $error")
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
         val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
@@ -159,7 +159,7 @@ class SightClientImplTest extends FunSuite:
         val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
         actualResponse.head match 
             case Right(pages) => assertEquals(pages, expectedResponse)
-            case Left(error) => assertFail(s"Unexpected error $error")
+            case Left(error) => fail(s"Unexpected error $error")
         assertEquals(actualResponse.force.size, 1)
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
@@ -222,7 +222,7 @@ class SightClientImplTest extends FunSuite:
         val filePaths = Seq("foo/goo.bmp")
         sightClient.recognize(filePaths) match 
             case Right(pages) => assertEquals(pages, expectedResponse)
-            case Left(error) => assertFail(s"Unexpected error $error")
+            case Left(error) => fail(s"Unexpected error $error")
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
         val expectedAuth = "Authorization: Basic 12345678-1234-1234-1234-123456781234"
@@ -240,7 +240,7 @@ class SightClientImplTest extends FunSuite:
         val filePaths = Seq("foo/goo.bmp")
         val actualResponse: Either[Error, Pages] = sightClient.recognize(filePaths)
         actualResponse. match 
-            case Right(pages) => assertFail(s"Cannot succeed!")
+            case Right(pages) => fail(s"Cannot succeed!")
             case Left(error) => assertEquals(error, expectedResponse)
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
@@ -303,7 +303,7 @@ class SightClientImplTest extends FunSuite:
         val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
         actualResponse.head match 
             case Right(pages) => assertEquals(pages, expectedResponse)
-            case Left(error) => assertFail(s"Unexpected error $error")
+            case Left(error) => fail(s"Unexpected error $error")
         assertEquals(actualResponse.force.size, 1)
         assertEquals(postArgs.size, 1)
         val expectedPayload = """{"makeSentences":false,"files":[{"mimeType":"image/bmp","base64File":"foo=="}]}"""
@@ -322,7 +322,7 @@ class SightClientImplTest extends FunSuite:
         val filePaths = Seq("foo/goo.bmp")
         val actualResponse: LazyList[Either[Error, Seq[Page]]] = sightClient.recognizeStream(filePaths)
         actualResponse.head match 
-            case Right(pages) => assertFail(s"Cannot succeed!")
+            case Right(pages) => fail(s"Cannot succeed!")
             case Left(error) => assertEquals(error, expectedResponse)
         assertEquals(actualResponse.force.size, 1)
         assertEquals(postArgs.size, 1)

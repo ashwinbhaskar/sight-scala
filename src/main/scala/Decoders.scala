@@ -9,7 +9,7 @@ import io.circe.Decoder
 import io.circe.Json
 import io.circe.syntax._
 
-given Decoder[RecognizedText]:
+given Decoder[RecognizedText] with
     def apply(c: HCursor): Result[RecognizedText] = 
         for {
             text <- c.get[String]("Text")
@@ -26,7 +26,7 @@ given Decoder[RecognizedText]:
             RecognizedText(text, confidence, topLeftX, topLeftY, topRightX, topRightY, bottomLeftX
             ,bottomLeftY, bottomRightX, bottomRightY)
 
-given Encoder[RecognizedText]:
+given Encoder[RecognizedText] with
     def apply(rt: RecognizedText): Json = Json.obj(
         ("Text", Json.fromString(rt.text)),
         ("Confidence", Json.fromDouble(rt.confidence).get),
@@ -39,14 +39,14 @@ given Encoder[RecognizedText]:
         ("BottomRightX", Json.fromInt(rt.bottomRightX)),
         ("BottomRightY", Json.fromInt(rt.bottomRightY)))
     
-given Decoder[RecognizedTexts]:
+given Decoder[RecognizedTexts] with
     def apply(c: HCursor): Result[RecognizedTexts] = 
-        c.get[Seq[RecognizedText]]("RecognizedText").map(RecognizedTexts)
+        c.get[Seq[RecognizedText]]("RecognizedText").map(RecognizedTexts.apply)
 
-given Encoder[RecognizedTexts]:
+given Encoder[RecognizedTexts] with
     def apply(rts: RecognizedTexts): Json = Json.obj(
         ("RecognizedText", rts.recognizedTexts.asJson))
-given Decoder[Page]:
+given Decoder[Page] with
     def apply(c: HCursor): Result[Page] =
         for {
             error <- c.get[Option[String]]("Error")
@@ -59,7 +59,7 @@ given Decoder[Page]:
             val sanitizedError = error.flatMap((e: String) => if(e.isEmpty) None else Some(e))
             Page(sanitizedError, fileIndex, pageNumber, numberOfPagesInFile, recognizedText)
 
-given Encoder[Page]:
+given Encoder[Page] with
     def apply(p: Page): Json = Json.obj(
         ("Error", if(p.error.isEmpty || p.error.get.isEmpty) Json.Null else Json.fromString(p.error.get)),
         ("FileIndex", Json.fromInt(p.fileIndex)),
@@ -67,18 +67,18 @@ given Encoder[Page]:
         ("NumberOfPagesInFile", Json.fromInt(p.numberOfPagesInFile)),
         ("RecognizedText", p.recognizedText.asJson))
 
-given Decoder[Pages]:
+given Decoder[Pages] with
     def apply(c: HCursor): Result[Pages] = 
-        c.get[Seq[Page]]("Pages").map(Pages)
+        c.get[Seq[Page]]("Pages").map(Pages.apply)
 
-given Encoder[Pages]:
+given Encoder[Pages] with
     def apply(ps: Pages): Json = Json.obj(
         ("Pages", ps.pages.asJson))
 
-given Decoder[PollingUrl]:
+given Decoder[PollingUrl] with
     def apply(c: HCursor): Result[PollingUrl] = 
-        c.get[String]("PollingURL").map(PollingUrl)
+        c.get[String]("PollingURL").map(PollingUrl.apply)
 
-given Encoder[PollingUrl]:
+given Encoder[PollingUrl] with
     def apply(pu: PollingUrl): Json = Json.obj(
         ("PollingURL", Json.fromString(pu.pollingUrl)))

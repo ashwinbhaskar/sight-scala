@@ -1,12 +1,12 @@
 package sight.client
 
-import sight.types.APIKey
-import sight.models.{Pages, Error, Page}
+import sight.types.{APIKey, StreamResponse}
+import sight.adt.Error
+import sight.models.{Pages, Page}
 import sttp.client.{SttpBackend, HttpURLConnectionBackend, Identity, NothingT}
 import scala.collection.immutable.LazyList
 
 trait SightClient(private val apiKey: APIKey, private val fileContentReader: FileContentReader):
-    type StreamResponse = LazyList[Either[Error, Seq[Page]]]
     def recognize(filePaths: Seq[String]): Either[Error,Pages] = recognize(filePaths, false)
     def recognize(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Pages]
     def recognizeStream(filePaths: Seq[String]): StreamResponse = recognizeStream(filePaths, false)

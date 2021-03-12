@@ -1,16 +1,17 @@
 package sight.client
 
-import sight.types.APIKey
-import sight.models.{Pages, MimeType, RecognizedTexts, PollingUrl, Page}
-import sight.models.Error
-import sight.models.Error.{DecodingFailure, ErrorResponse}
+import sight.types.{APIKey, StreamResponse}
+import sight.models.{Pages, RecognizedTexts, PollingUrl, Page}
+import sight.adt.{Error, MimeType}
+import sight.adt.Error.{DecodingFailure, ErrorResponse}
+import sight.extensions._
 import sttp.client._
 import sttp.client.circe._
 import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 import io.circe.parser.decode
 import sight.decoders.{given Decoder[Pages], given Decoder[RecognizedTexts], given Decoder[PollingUrl]}
-import cats.implicits.{given _}
+import cats.implicits._
 import scala.language.implicitConversions
 import sttp.client.{SttpBackend, Identity, NothingT}
 import scala.util.chaining._
@@ -19,11 +20,11 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
     type DecodedPostResponse = Either[Error, PollingUrl | RecognizedTexts]
     private case class FileContent(mimeType: MimeType, base64FileContent: String)
     private case class Payload(shouldMakeSentences: Boolean, files: Seq[FileContent])
-    private given Encoder[FileContent]:
+    private given Encoder[FileContent] with
         def apply(fileContent: FileContent): Json = Json.obj(
             ("mimeType", Json.fromString(fileContent.mimeType.strRep)),
             ("base64File", Json.fromString(fileContent.base64FileContent)))
-    private given Encoder[Payload]:
+    private given Encoder[Payload] with
         def apply(payload: Payload): Json = Json.obj(
             ("makeSentences", Json.fromBoolean(payload.shouldMakeSentences)),
             ("files", payload.files.asJson))
@@ -80,9 +81,9 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         }
     
     private def isSeenAllPages(pageSeenTracker: Array[Array[Boolean]]): Boolean = 
-        pageSeenTracker.forall(_.foldLeft(true)(_ && _))
+        pageSeenTracker.forall(_.allTrue)
 
-    private def getPayload(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Payload] = 
+    private def constructPayload(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Payload] = 
         for 
             filePaths1 <- filePaths.asRight[Nothing]
             mimeTypes <- fileContentReader.fileMimeTypes(filePaths1)
@@ -92,7 +93,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
             Payload(shouldWordLevelBoundBoxes, fileContents)
     
     override def recognize(filePaths: Seq[String], shouldWordLevelBoundBoxes: Boolean): Either[Error, Pages] = 
-        getPayload(filePaths, shouldWordLevelBoundBoxes) match 
+        constructPayload(filePaths, shouldWordLevelBoundBoxes) match 
             case Left(error) => Left(error)
             case Right(payload) => 
                 sightPost(payload).flatMap{
@@ -108,7 +109,7 @@ class SightClientImpl(private val apiKey: APIKey, private val fileContentReader:
         def onRecognizedTexts(rt: RecognizedTexts): StreamResponse = 
             val page = Page(error = None, fileIndex = 0, pageNumber = 1, numberOfPagesInFile = 1, recognizedText = rt.recognizedTexts)
             LazyList((Seq(page).asRight[Error]))
-        getPayload(filePaths, shouldWordLevelBoundBoxes) match
+        constructPayload(filePaths, shouldWordLevelBoundBoxes) match
             case Left(error) => LazyList(Left(error))
             case Right(payload) => 
                 sightPost(payload).fold[StreamResponse](_.asLeft[Seq[Page]].pipe(LazyList(_)), {
