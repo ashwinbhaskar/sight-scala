@@ -1,4 +1,4 @@
-import sight.types.APIKey
+import sight.Types.APIKey
 import sight.adt.Error.InvalidAPIKeyFormat
 import sight.adt.Error
 import cats.implicits._
