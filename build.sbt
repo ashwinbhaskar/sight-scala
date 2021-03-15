@@ -21,7 +21,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "sight-client",
-    version := "0.1.1",
+    version := "0.1.2",
     scalaVersion := "3.0.0-RC1",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.22",
