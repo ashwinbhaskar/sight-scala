@@ -1,6 +1,6 @@
 package sight.client
 
-import sight.types.{APIKey, StreamResponse}
+import sight.Types.{APIKey, StreamResponse}
 import sight.models.{Pages, RecognizedTexts, PollingUrl, Page}
 import sight.adt.{Error, MimeType}
 import sight.adt.Error.{DecodingFailure, ErrorResponse}

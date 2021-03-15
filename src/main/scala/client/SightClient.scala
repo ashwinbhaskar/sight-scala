@@ -1,6 +1,6 @@
 package sight.client
 
-import sight.types.{APIKey, StreamResponse}
+import sight.Types.{APIKey, StreamResponse}
 import sight.adt.Error
 import sight.models.{Pages, Page}
 import sttp.client.{SttpBackend, HttpURLConnectionBackend, Identity, NothingT}

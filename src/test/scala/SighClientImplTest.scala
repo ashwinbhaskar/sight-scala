@@ -4,7 +4,7 @@ import sight.adt.{MimeType, Error}
 import sight.adt.MimeType._
 import sight.client.FileContentReader
 import sight.adt.Error._
-import sight.types.APIKey
+import sight.Types.APIKey
 import sight.client.SightClientImpl
 import sttp.client.{SttpBackend, Identity, NothingT, Request, Response, ResponseAs, StringBody, HttpURLConnectionBackend}
 import sttp.model.Method.{GET, POST}
