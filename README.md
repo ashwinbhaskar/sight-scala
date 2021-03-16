@@ -34,8 +34,11 @@ Grap an APIKey from the [Sight Dashboard](https://siftrics.com/)
     val files: Seq[String] = Seq("/user/john.doe/foo.pdf","/user/john.doe/baz/bmp")
     val result: Either[Error, Pages] = apiKey.flatMap(key => SightClient(key).recognize(files))
 
+    /*
+    Helper extension methods to inspect the reesult
+    Note: Extension methods will not work with Scala 2.13.4 and 2.13.5
+    */
     import sight.extensions._
-
     val allTxt: Either[Error, Seq[String]] = result.map(_.allText)
     val allTxtGt: Either[Error, Seq[String]] = result.map(_.allTextWithConfidenceGreaterThan(0.2))
     ```
