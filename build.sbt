@@ -22,9 +22,9 @@ lazy val root = project
   .settings(
     name := "sight-client",
     version := "0.1.2",
-    scalaVersion := "3.0.0-RC1",
+    scalaVersion := "3.0.0-RC2",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.22",
+      "org.scalameta" %% "munit" % "0.7.23",
       "com.softwaremill.sttp.client" % "core_2.13" % "2.0.4",
       "com.softwaremill.sttp.client" % "circe_2.13" % "2.0.4",
       "org.typelevel" % "cats-core_2.13" % "2.0.0",

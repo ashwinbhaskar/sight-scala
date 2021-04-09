@@ -2,7 +2,7 @@
 Scala client library for Sight APIs. The Sight API is a text recognition service.
 
 
-## Scala 3.0.0-RC1
+## Scala 3.0.0-RC1, 3.0.0-RC2
 
 ### Dependency 
 
